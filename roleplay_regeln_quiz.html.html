@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legale Organisationen - Regelwerk Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-screen h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 150px;
+            margin: 10px;
+        }
+
+        .stat-box h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-box p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question-box {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: white;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+            font-size: 3em;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-circle small {
+            font-size: 0.3em;
+            margin-top: 10px;
+        }
+
+        .result-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .result-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .category-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .category-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .category-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Legale Organisationen Regelwerk Quiz</h1>
+            <p>Teste dein Wissen über die Regeln staatlicher Organisationen</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="content">
+            <!-- Start Screen -->
+            <div class="start-screen" id="startScreen">
+                <h2>Willkommen zum Regelwerk-Quiz!</h2>
+                <p style="color: #666; margin: 20px 0; line-height: 1.6;">
+                    Dieses Quiz testet dein Wissen über die Regeln für legale Organisationen, 
+                    Event-Regeln, Greenzone-Regeln und vieles mehr. Beantworte alle Fragen 
+                    und überprüfe dein Verständnis der wichtigsten Regelungen.
+                </p>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <h3>50</h3>
+                        <p>Fragen</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>~20</h3>
+                        <p>Minuten</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>8</h3>
+                        <p>Kategorien</p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="startQuiz()">Quiz starten</button>
+            </div>
+
+            <!-- Question Container -->
+            <div class="question-container" id="questionContainer">
+                <div class="question-box">
+                    <div class="question-number" id="questionNumber">Frage 1 von 50</div>
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options" id="optionsContainer"></div>
+                    <div class="feedback" id="feedback"></div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn" id="prevBtn" onclick="previousQuestion()" style="background: #6c757d;">Zurück</button>
+                    <button class="btn" id="nextBtn" onclick="nextQuestion()">Nächste Frage</button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div class="results-screen" id="resultsScreen">
+                <h2>Quiz abgeschlossen! 🎉</h2>
+                
+                <div class="score-circle" id="scoreCircle">
+                    <span id="scorePercentage">0%</span>
+                    <small id="scoreText">0/50 richtig</small>
+                </div>
+
+                <div class="result-details">
+                    <h3>Deine Ergebnisse nach Kategorie:</h3>
+                    <div class="category-results" id="categoryResults"></div>
+                </div>
+
+                <button class="btn" onclick="restartQuiz()">Quiz wiederholen</button>
+                <button class="btn" onclick="reviewAnswers()" style="background: #28a745;">Antworten überprüfen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Allgemeine Regeln
+            {
+                category: "Allgemeine Regeln",
+                question: "Ist es erlaubt, Mitarbeiter zwischen verschiedenen Organisationen zu tauschen?",
+                options: [
+                    "Ja, immer ohne Einschränkungen",
+                    "Ja, aber nur wenn beide Leader einverstanden sind",
+                    "Nein, es ist grundsätzlich verboten",
+                    "Ja, aber nur mit Genehmigung eines Admins"
+                ],
+                correct: 1,
+                explanation: "Laut Regel 1.2 ist der Tausch nur erlaubt, wenn beide Leader einverstanden sind."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Dürfen Personen mit Vorstrafen in staatliche Organisationen aufgenommen werden?",
+                options: [
+                    "Ja, nach einer Bewährungszeit",
+                    "Ja, mit Genehmigung des Leaders",
+                    "Nein, es ist verboten",
+                    "Nur in niedrigere Ränge"
+                ],
+                correct: 2,
+                explanation: "Regel 1.3 besagt klar, dass es verboten ist, Personen mit Vorstrafen aufzunehmen."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Welche Strafe gibt es für das Looten während eines aktiven Schussgefechts?",
+                options: [
+                    "Verwarnung",
+                    "Jail 60 Minuten",
+                    "Jail 120 Minuten",
+                    "Bann 30 Tage"
+                ],
+                correct: 2,
+                explanation: "Regel 1.15 bestimmt: Looten während aktivem Schussgefecht = Jail 120 Minuten."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Wie viele Bad-Cops sind maximal pro Organisation erlaubt?",
+                options: [
+                    "3 Bad-Cops",
+                    "5 Bad-Cops",
+                    "10 Bad-Cops",
+                    "Unbegrenzt"
+                ],
+                correct: 1,
+                explanation: "Laut Regel 1.12 sind maximal 5 Bad-Cops pro Organisation erlaubt."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Wie viel Zeit hat man, eine Person ins Gefängnis zu bringen (ab Anlegen der Handschellen)?",
+                options: [
+                    "15 Minuten",
+                    "20 Minuten",
+                    "25 Minuten",
+                    "30 Minuten"
+                ],
+                correct: 2,
+                explanation: "Regel 1.14: Man hat 25 Minuten Zeit. Bei Anwaltsforderung kann sich die Zeit verlängern."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Ist es erlaubt, mit einer Person zu rennen, die Handschellen trägt?",
+                options: [
+                    "Ja, immer erlaubt",
+                    "Ja, aber nur im Notfall",
+                    "Nein, es ist verboten",
+                    "Nur auf kurzen Strecken"
+                ],
+                correct: 2,
+                explanation: "Regel 1.16 verbietet dies eindeutig. Strafe: Jail 120 Minuten."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Wie oft müssen staatliche Organisationen pro Woche Ghetto-Patrouillen durchführen?",
+                options: [
+                    "1 Mal pro Woche",
+                    "2 Mal pro Woche",
+                    "3 Mal pro Woche",
+                    "Täglich"
+                ],
+                correct: 2,
+                explanation: "Regel 1.21: Jede staatliche Organisation muss 3 Mal pro Woche Ghetto-Patrouillen durchführen (mindestens 8 Personen)."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Dürfen Staatsbedienstete im Dienst Masken tragen?",
+                options: [
+                    "Ja, alle dürfen Masken tragen",
+                    "Nein, grundsätzlich verboten",
+                    "Nur Spezialeinheiten mit Organisationsmasken",
+                    "Nur mit Genehmigung des Leaders"
+                ],
+                correct: 2,
+                explanation: "Regel 1.10: Nur Spezialeinheiten (FIB/LSPD/SAHP/USSS/NG) dürfen Masken tragen, die im Lager der Organisation sind."
+            },
+
+            // Event-Regeln
+            {
+                category: "Event-Regeln",
+                question: "Ist Teaming bei Events erlaubt?",
+                options: [
+                    "Ja, immer erlaubt",
+                    "Nur bei bestimmten Events",
+                    "Nein, außer wenn vom System vorgegeben",
+                    "Nur mit max. 2 Personen"
+                ],
+                correct: 2,
+                explanation: "Regel 1.1: Teaming ist verboten, außer bei Events wo es vom System vorgegeben ist. Strafe: Jail 120 Minuten."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wie lange vor und nach einem Event ist es verboten, jemanden zu töten/auszurauben?",
+                options: [
+                    "5 Minuten vor, 5 Minuten nach",
+                    "10 Minuten vor, 5 Minuten nach",
+                    "15 Minuten vor, 10 Minuten nach",
+                    "10 Minuten vor, 10 Minuten nach"
+                ],
+                correct: 1,
+                explanation: "Regel 1.2: 10 Minuten vor Beginn und 5 Minuten nach dem Event. Strafe: Warn."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Welche Waffen sind bei Überfällen auf Waffenläden und 24/7 verboten?",
+                options: [
+                    "Alle automatischen Waffen",
+                    "Maschinengewehre und Scharfschützengewehre",
+                    "Nur Scharfschützengewehre",
+                    "Nur schwere Waffen"
+                ],
+                correct: 1,
+                explanation: "Regel 1.6: Maschinengewehre und Scharfschützengewehre sind verboten. Strafe: Jail 120 Minuten."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Was ist das Limit für Überfälle auf Waffenläder und 24/7?",
+                options: [
+                    "30/30 Personen",
+                    "35/35 Personen",
+                    "40/40 Personen",
+                    "50/50 Personen"
+                ],
+                correct: 2,
+                explanation: "Regel 1.4: Das Limit ist 40/40 Personen. Strafe: Jail 180 Minuten."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wie lange müssen Event-POVs aufbewahrt werden?",
+                options: [
+                    "24 Stunden",
+                    "48 Stunden",
+                    "72 Stunden",
+                    "1 Woche"
+                ],
+                correct: 1,
+                explanation: "Regel 1.7: POVs müssen 48 Stunden aufbewahrt werden. Strafe bei Nichtvorhandensein: Bann 30 Tage."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wie viele Geiseln sind bei Überfall-Events maximal erlaubt?",
+                options: [
+                    "1 Geisel",
+                    "2 Geiseln",
+                    "3 Geiseln",
+                    "4 Geiseln"
+                ],
+                correct: 1,
+                explanation: "Regel 1.12: Bei Überfall-Events und Entführungen gibt es ein Limit von 2 Geiseln."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wie viel Geld kann für eine High Command Geisel gefordert werden?",
+                options: [
+                    "100.000$",
+                    "200.000$",
+                    "300.000$",
+                    "400.000$"
+                ],
+                correct: 2,
+                explanation: "Regel 1.16: Zivilist 100k, Beamte 200k, High Command 300k, Leader 400k."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Ist es erlaubt, private Fahrzeuge bei Events zu nutzen, wenn man als Gangmitglied agiert?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, aber nur eigene",
+                    "Nein, nur Gang-Autos",
+                    "Nur mit Genehmigung"
+                ],
+                correct: 2,
+                explanation: "Regel 1.17: Es ist verboten, private Fahrzeuge zu benutzen. Man darf nur Gang-Autos nutzen."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wann findet der Banküberfall statt?",
+                options: [
+                    "Montags und Donnerstags um 21:30 Uhr",
+                    "Dienstags und Freitags um 21:30 Uhr",
+                    "Mittwochs und Samstags um 21:30 Uhr",
+                    "Jeden Tag um 21:30 Uhr"
+                ],
+                correct: 2,
+                explanation: "IC Events: Banküberfall findet Mittwochs und Samstags um 21:30 Uhr statt."
+            },
+
+            // Greenzone-Regeln
+            {
+                category: "Greenzone-Regeln",
+                question: "Was ist in einer Greenzone grundsätzlich verboten?",
+                options: [
+                    "Nur das Töten",
+                    "Jegliche kriminelle Aktivität",
+                    "Nur Drogenhandel",
+                    "Nur Waffenhandel"
+                ],
+                correct: 1,
+                explanation: "Greenzones sind Orte, an denen jegliche kriminelle Aktivität verboten ist."
+            },
+            {
+                category: "Greenzone-Regeln",
+                question: "Welche Strafe gibt es für das Töten in einer Greenzone?",
+                options: [
+                    "Jail 60 Minuten",
+                    "Jail 120 Minuten",
+                    "Warn",
+                    "Bann 7 Tage"
+                ],
+                correct: 2,
+                explanation: "Regel 1.1: Das Töten in einer Greenzone wird mit einem Warn bestraft."
+            },
+            {
+                category: "Greenzone-Regeln",
+                question: "Ist es erlaubt, vor einer RP-Situation in eine Greenzone zu flüchten?",
+                options: [
+                    "Ja, das ist erlaubt",
+                    "Nein, das ist verboten",
+                    "Nur in Notfällen",
+                    "Nur wenn man verfolgt wird"
+                ],
+                correct: 1,
+                explanation: "Regel 1.3: Es ist verboten, eine RP-Situation zu verlassen, indem man in eine Greenzone flüchtet. Strafe: Warn."
+            },
+            {
+                category: "Greenzone-Regeln",
+                question: "Welche der folgenden Orte ist KEINE Greenzone?",
+                options: [
+                    "Zentralkrankenhaus",
+                    "Tankstelle",
+                    "Gang-HQ",
+                    "Regierung"
+                ],
+                correct: 2,
+                explanation: "Gang-HQs sind kriminelle Orte und KEINE Greenzones. Alle anderen genannten Orte sind Greenzones."
+            },
+            {
+                category: "Greenzone-Regeln",
+                question: "Ist der Schwarzmarkt eine Greenzone?",
+                options: [
+                    "Nein, krimineller Ort",
+                    "Ja, es ist eine Greenzone",
+                    "Nur tagsüber",
+                    "Nur für Staatsbedienstete"
+                ],
+                correct: 1,
+                explanation: "Laut der Liste ist der Schwarzmarkt als Greenzone aufgeführt."
+            },
+
+            // Regierung
+            {
+                category: "Regierung",
+                question: "Wie oft darf die Regierung pro Woche große Veranstaltungen durchführen?",
+                options: [
+                    "Unbegrenzt",
+                    "Einmal täglich",
+                    "Dreimal pro Woche",
+                    "Einmal pro Woche"
+                ],
+                correct: 1,
+                explanation: "Regel 2.2: Die Regierung hat das Recht, einmal täglich Veranstaltungen für Spieler mit großem Umfang durchzuführen."
+            },
+            {
+                category: "Regierung",
+                question: "Darf die Regierung die Staatskasse für persönliche Zwecke verwenden?",
+                options: [
+                    "Ja, nach Ermessen",
+                    "Ja, mit Genehmigung",
+                    "Nein, es ist verboten",
+                    "Nur in Notfällen"
+                ],
+                correct: 2,
+                explanation: "Regel 2.10: Die Regierung ist nicht berechtigt, die Staatskasse für persönliche Zwecke zu verwenden."
+            },
+            {
+                category: "Regierung",
+                question: "Wie viele qualifizierte Anwälte sollte die Regierung mindestens haben?",
+                options: [
+                    "Einen",
+                    "Zwei",
+                    "Drei",
+                    "Fünf"
+                ],
+                correct: 1,
+                explanation: "Regel 2.12: Die Regierung sollte über mindestens zwei qualifizierte Anwälte verfügen."
+            },
+            {
+                category: "Regierung",
+                question: "Wie oft muss die Regierung mindestens ein Event für alle Einwohner veranstalten?",
+                options: [
+                    "Einmal pro Woche",
+                    "Einmal in 3 Tagen",
+                    "Zweimal pro Woche",
+                    "Täglich"
+                ],
+                correct: 1,
+                explanation: "Regel 2.13: Die Regierung ist verpflichtet, mindestens ein Mal in 3 Tagen ein kleines oder mittleres Event zu veranstalten."
+            },
+            {
+                category: "Regierung",
+                question: "Muss die Regierung Gesetze mit Leadern anderer Organisationen abstimmen?",
+                options: [
+                    "Nein, nie",
+                    "Ja, wenn die Gesetze ihre Arbeit betreffen",
+                    "Nur bei wichtigen Gesetzen",
+                    "Nur mit illegalen Organisationen"
+                ],
+                correct: 1,
+                explanation: "Regel 2.8: Die Regierung muss Gesetze mit Leitern abstimmen, wenn diese deren Arbeit betreffen."
+            },
+            {
+                category: "Regierung",
+                question: "Wie viele Inspektionen darf die Regierung maximal pro Woche durchführen?",
+                options: [
+                    "5 Kontrollen",
+                    "7 Kontrollen",
+                    "10 Kontrollen",
+                    "Unbegrenzt"
+                ],
+                correct: 1,
+                explanation: "Regel 2.6: Nicht mehr als 7 Kontrollen pro Woche und nicht mehr als 2 Kontrollen der selben Fraktion pro Woche."
+            },
+
+            // Wahl-Regeln
+            {
+                category: "Wahl-Regeln",
+                question: "Wie viele Mitglieder muss eine Partei mindestens haben?",
+                options: [
+                    "10 Mitglieder",
+                    "15 Mitglieder",
+                    "20 Mitglieder",
+                    "25 Mitglieder"
+                ],
+                correct: 2,
+                explanation: "Wahl-Regel 3: Die Partei muss aus mindestens 20 einzigartigen Mitgliedern bestehen."
+            },
+            {
+                category: "Wahl-Regeln",
+                question: "Ist Wahlwerbung im Staatsfunk erlaubt?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, aber begrenzt",
+                    "Nein, verboten (-20 Stimmen)",
+                    "Nur mit Genehmigung"
+                ],
+                correct: 2,
+                explanation: "Regel 6: Man darf keine Wahlwerbung im Staatsfunk betreiben. Strafe: -20 Stimmen."
+            },
+            {
+                category: "Wahl-Regeln",
+                question: "Wie viel Zeit hat jeder Kandidat bei Debatten für seine erste Rede?",
+                options: [
+                    "5 Minuten",
+                    "10 Minuten",
+                    "15 Minuten",
+                    "20 Minuten"
+                ],
+                correct: 1,
+                explanation: "Regel 9: Jeder Kandidat hat 10 Minuten Zeit für seine erste Rede bei den Debatten."
+            },
+            {
+                category: "Wahl-Regeln",
+                question: "Wie viele Fragen kann jeder Kandidat an seinen Gegner stellen?",
+                options: [
+                    "3 Fragen",
+                    "5 Fragen",
+                    "7 Fragen",
+                    "10 Fragen"
+                ],
+                correct: 1,
+                explanation: "Regel 10: Jeder Kandidat kann bis zu 5 Fragen an seinen Gegner stellen."
+            },
+            {
+                category: "Wahl-Regeln",
+                question: "Was passiert, wenn ein Kandidat nicht an den Debatten teilnimmt?",
+                options: [
+                    "Verwarnung",
+                    "Stimmabzug",
+                    "Ausschluss von den Wahlen",
+                    "Geldstrafe"
+                ],
+                correct: 2,
+                explanation: "Regel 8: Kandidaten, die nicht an den Debatten teilnehmen, werden von den Wahlen ausgeschlossen."
+            },
+            {
+                category: "Wahl-Regeln",
+                question: "Muss ein Parteivorsitzender eine saubere Akte haben?",
+                options: [
+                    "Nein, nicht notwendig",
+                    "Ja, keine Vorstrafen",
+                    "Ja, keinen aktiven Warn",
+                    "Nur in bestimmten Fällen"
+                ],
+                correct: 2,
+                explanation: "Regel 12: Ein Parteivorsitzender muss eine saubere Akte haben (keinen aktiven Warn)."
+            },
+
+            // Zusätzliche Fragen (Allgemeine Regeln)
+            {
+                category: "Allgemeine Regeln",
+                question: "Ist es erlaubt, aus gepanzerten Fahrzeugen wie Kuruma zu schießen?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, aber nur im Notfall",
+                    "Nein, verboten",
+                    "Nur als Beifahrer"
+                ],
+                correct: 2,
+                explanation: "Regel 1.17: Es ist verboten aus gepanzerten Fahrzeugen zu schießen. Strafe: Jail 120 Minuten."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Dürfen EMS-Mitarbeiter während einer aktiven Schießerei helfen?",
+                options: [
+                    "Ja, immer",
+                    "Ja, aber mit Schutz",
+                    "Nein, sie müssen das Gebiet verlassen",
+                    "Nur nach Aufforderung"
+                ],
+                correct: 2,
+                explanation: "Regel 1.18: EMS muss das Gebiet verlassen, bis es als sicher gilt. Strafe: Jail 120 Minuten."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Was benötigt man für eine Durchsuchung/Razzia bei staatlichen Organisationen?",
+                options: [
+                    "Mündliche Genehmigung",
+                    "RP-Befehle oder RP-Hintergrund",
+                    "Durchsuchungsbefehl",
+                    "Beide: RP-Hintergrund und Durchsuchungsbefehl"
+                ],
+                correct: 3,
+                explanation: "Regel 1.11: Bei einer Razzia benötigen alle Staatsbediensteten einen Durchsuchungsbefehl und RP-Hintergrund."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Wer kann bei Sondereinsätzen die Führung übernehmen?",
+                options: [
+                    "LSPD",
+                    "FIB",
+                    "SAHP",
+                    "Regierung"
+                ],
+                correct: 1,
+                explanation: "Regel 1.7: Das FIB kann bei Sondereinsätzen die Führung übernehmen."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Was gilt als Gang-HQ laut den Regeln?",
+                options: [
+                    "Jeder Gang-Treffpunkt",
+                    "Der Ort mit Schädel auf der Karte",
+                    "Die Gang-Basis",
+                    "Alle Gang-Gebiete"
+                ],
+                correct: 1,
+                explanation: "Regel 1.13: Das HQ ist der Ort (Schädel auf der Karte), an dem die Gang am aktivsten ist."
+            },
+            {
+                category: "Allgemeine Regeln",
+                question: "Dürfen Barrikaden vor Alarm-Punkten aufgestellt werden?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, aber begrenzt",
+                    "Nein, verboten",
+                    "Nur mit Durchgang"
+                ],
+                correct: 2,
+                explanation: "Regel 1.19: Es ist verboten Barrikaden vor den Alarm Punkten aufzustellen (Punkte müssen für Gangs erreichbar sein)."
+            },
+
+            // Zusätzliche Event-Regeln
+            {
+                category: "Event-Regeln",
+                question: "Wann findet 'König der Insel Cayo Perico' statt?",
+                options: [
+                    "Dienstags um 20:20 Uhr",
+                    "Mittwochs um 20:20 Uhr",
+                    "Donnerstags um 20:20 Uhr",
+                    "Freitags um 20:20 Uhr"
+                ],
+                correct: 1,
+                explanation: "IC Events: König der Insel Cayo Perico findet Mittwochs um 20:20 Uhr statt."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wann findet die Kaperung eines Flugzeugträgers statt?",
+                options: [
+                    "Mittwochs um 21:30 Uhr",
+                    "Donnerstags um 21:30 Uhr",
+                    "Freitags um 21:30 Uhr",
+                    "Samstags um 21:30 Uhr"
+                ],
+                correct: 1,
+                explanation: "IC Events: Kaperung eines Flugzeugträgers findet Donnerstags um 21:30 Uhr statt."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wie oft findet Ladendiebstahl statt?",
+                options: [
+                    "Jede Stunde",
+                    "Alle 2 Stunden",
+                    "Alle 3 Stunden",
+                    "Alle 4 Stunden"
+                ],
+                correct: 2,
+                explanation: "IC Events: Ladendiebstahl findet alle 3 Stunden statt."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Ist es erlaubt, Familienmitglieder für Familienkriege zwischen Familien zu tauschen?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, mit Genehmigung",
+                    "Nein, verboten",
+                    "Nur temporär"
+                ],
+                correct: 2,
+                explanation: "Regel 1.8: Es ist verboten, Familienmitglieder zwischen Familien für Familienkriege/Business war zu tauschen. Strafe: Warn."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Müssen bei Überfällen auf Waffenläden und 24/7 die Beamten mit Kriminellen reden?",
+                options: [
+                    "Nein, nicht notwendig",
+                    "Ja, ein Rollenspiel ist erforderlich",
+                    "Nur bei Geiselnahme",
+                    "Optional"
+                ],
+                correct: 1,
+                explanation: "Regel 1.5: Ein Rollenspiel muss sein und die Beamten müssen mit den kriminellen reden. Strafe: Jail 180 Minuten."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Wann müssen Organisationslager während der Purge geschlossen sein?",
+                options: [
+                    "30 Minuten vor Beginn",
+                    "1 Stunde vor Beginn",
+                    "2 Stunden vor Beginn",
+                    "Bei Beginn"
+                ],
+                correct: 1,
+                explanation: "Regel 1.10: Alle Organisationslager müssen eine Stunde vor Beginn der Purge geschlossen sein. Strafe: Bann 30 Tage."
+            },
+            {
+                category: "Event-Regeln",
+                question: "Dürfen Beamte während des Flugzeugträger-Events auf Personen im Wasser schießen?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, aber nur zur Warnung",
+                    "Nein, sie müssen Personen auf den Träger kommen lassen",
+                    "Nur bei Gegenwehr"
+                ],
+                correct: 2,
+                explanation: "Regel 1.21: Beamte dürfen nicht auf Personen im Wasser schießen. Sie müssen die Personen auf den Träger kommen lassen. Strafe: Warn."
+            },
+
+            // Zusätzliche Greenzone-Regeln
+            {
+                category: "Greenzone-Regeln",
+                question: "Ist das Casino eine Greenzone?",
+                options: [
+                    "Nein",
+                    "Ja",
+                    "Nur der Eingangsbereich",
+                    "Nur tagsüber"
+                ],
+                correct: 1,
+                explanation: "Laut der Liste der Greenzones ist das Casino als Greenzone aufgeführt."
+            },
+            {
+                category: "Greenzone-Regeln",
+                question: "Sind Wohnanlagen Greenzones?",
+                options: [
+                    "Nein",
+                    "Ja",
+                    "Nur öffentliche Bereiche",
+                    "Nur private Wohnungen"
+                ],
+                correct: 1,
+                explanation: "Wohnanlagen sind in der Liste der Greenzones aufgeführt."
+            },
+            {
+                category: "Greenzone-Regeln",
+                question: "Ist es erlaubt, in einer Greenzone Waffen zu verkaufen?",
+                options: [
+                    "Ja, erlaubt",
+                    "Ja, aber diskret",
+                    "Nein, verboten",
+                    "Nur an Staatsbedienstete"
+                ],
+                correct: 2,
+                explanation: "Regel 1.2: Das Verkaufen und Kaufen von Waffen ist in Greenzones verboten. Strafe: Warn."
+            },
+
+            // Zusätzliche Regierungs-Regeln
+            {
+                category: "Regierung",
+                question: "Hat ein Anwalt das Recht, Beweise gegen einen Angeklagten anzufordern?",
+                options: [
+                    "Nein",
+                    "Ja, und sie dürfen nicht verweigert werden",
+                    "Ja, aber nur mit Genehmigung",
+                    "Nur in bestimmten Fällen"
+                ],
+                correct: 1,
+                explanation: "Regel 2.5: Ein Anwalt hat das Recht, Beweise anzufordern und diese dürfen nicht verweigert werden."
+            },
+            {
+                category: "Regierung",
+                question: "Hat die Regierung das Recht, einen Mitarbeiter einer Organisation zu entlassen?",
+                options: [
+                    "Nein, nie",
+                    "Ja, nach interner Prüfung bei Verstößen",
+                    "Ja, ohne Begründung",
+                    "Nur mit Zustimmung des Leaders"
+                ],
+                correct: 1,
+                explanation: "Regel 2.7: Die Regierung hat das Recht nach interner Prüfung Mitarbeiter zu entlassen, wenn Verstöße festgestellt werden."
+            },
+            {
+                category: "Regierung",
+                question: "Mit wem muss die Regierung bei Gesetzesänderungen ein Meeting vereinbaren?",
+                options: [
+                    "Nur mit staatlichen Leadern",
+                    "Mit allen Leadern von staatlichen Organisationen",
+                    "Mit allen Organisationen",
+                    "Nur mit dem Senior Berater"
+                ],
+                correct: 1,
+                explanation: "Regel 1.20: Der Gouverneur muss ein Meeting mit allen Leadern von staatlichen Organisationen vereinbaren."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        function startQuiz() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('questionContainer').classList.add('active');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Frage ${currentQuestion + 1} von ${questions.length} - ${question.category}`;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <input type="radio" name="answer" id="option${index}" value="${index}">
+                    <label for="option${index}" style="cursor: pointer; flex: 1;">${option}</label>
+                `;
+                optionDiv.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'inline-block' : 'none';
+            
+            // Update progress bar
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Load previous answer if exists
+            if (userAnswers[currentQuestion] !== undefined) {
+                document.getElementById(`option${userAnswers[currentQuestion]}`).checked = true;
+                showFeedback();
+            }
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option input[type="radio"]').forEach(input => input.checked = false);
+            document.getElementById(`option${index}`).checked = true;
+            userAnswers[currentQuestion] = index;
+            showFeedback();
+        }
+
+        function showFeedback() {
+            const question = questions[currentQuestion];
+            const selectedAnswer = userAnswers[currentQuestion];
+            const feedback = document.getElementById('feedback');
+            
+            if (selectedAnswer === undefined) return;
+            
+            const isCorrect = selectedAnswer === question.correct;
+            
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Richtig!' : '✗ Falsch!'}</strong><br>
+                ${question.explanation}
+            `;
+            
+            // Highlight options
+            document.querySelectorAll('.option').forEach((opt, idx) => {
+                opt.classList.remove('correct', 'incorrect');
+                if (idx === question.correct) {
+                    opt.classList.add('correct');
+                } else if (idx === selectedAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+                opt.classList.add('disabled');
+            });
+        }
+
+        function nextQuestion() {
+            if (userAnswers[currentQuestion] === undefined) {
+                alert('Bitte wähle eine Antwort aus!');
+                return;
+            }
+            
+            currentQuestion++;
+            
+            if (currentQuestion >= questions.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            // Calculate score
+            score = 0;
+            const categoryScores = {};
+            
+            questions.forEach((q, index) => {
+                if (!categoryScores[q.category]) {
+                    categoryScores[q.category] = { correct: 0, total: 0 };
+                }
+                categoryScores[q.category].total++;
+                
+                if (userAnswers[index] === q.correct) {
+                    score++;
+                    categoryScores[q.category].correct++;
+                }
+            });
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            // Update UI
+            document.getElementById('questionContainer').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            document.getElementById('progressBar').style.width = '100%';
+            
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            document.getElementById('scoreText').textContent = `${score}/${questions.length} richtig`;
+            
+            // Category results
+            const categoryResultsContainer = document.getElementById('categoryResults');
+            categoryResultsContainer.innerHTML = '';
+            
+            Object.keys(categoryScores).forEach(category => {
+                const catScore = categoryScores[category];
+                const catPercentage = Math.round((catScore.correct / catScore.total) * 100);
+                
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <h4>${category}</h4>
+                    <p>${catScore.correct}/${catScore.total} richtig (${catPercentage}%)</p>
+                `;
+                categoryResultsContainer.appendChild(card);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+
+        function reviewAnswers() {
+            currentQuestion = 0;
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('questionContainer').classList.add('active');
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
